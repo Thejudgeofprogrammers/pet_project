@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 
 @Controller('api/token')
 export class TokenController {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(private readonly tokenService: TokenService) {};
 
   @Post('generate')
   async generateToken(@Body() user: any, @Res() res: Response): Promise<void> {

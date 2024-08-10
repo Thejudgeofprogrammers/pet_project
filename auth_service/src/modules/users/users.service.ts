@@ -5,10 +5,14 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDTO, UpdateUserDTO } from './dto';
 import IUserDTO from './interfaces/user.interface';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(User.name) private readonly userRepository: Model<UserDocument>) {};
+    constructor(
+        @InjectModel(User.name) private readonly userRepository: Model<UserDocument>,
+        private readonly httpService: HttpService
+    ) {};
 
     public async getAllUsers(): Promise<IUserDTO[]> {
         return await this.userRepository.find().select('-__v').exec();
@@ -48,13 +52,22 @@ export class UsersService {
         };
     };
 
-    public async publicUser(email: string): Promise<User> {
+    public async publicUser(email: string): Promise<any> {
         try {
-            return this.userRepository.findOne({ email })
+            const user = this.userRepository.findOne({ email })
                 .select('-password')
                 .select('-__v')
-                .populate('books')
                 .exec()
+
+            if (!user) {
+                throw new Error('User not found!');
+            };
+
+            const books = await this.httpService.get('http://books-service/api/books', {
+                params: { userId: (await user)._id.toString() }
+            }).toPromise();
+
+            return { ...(await user).toObject(), books: books.data };
         } catch (err) {
             console.error(err);
             throw err;  
@@ -72,7 +85,17 @@ export class UsersService {
 
     public async deleteUser(email: string): Promise<boolean> {
         try {
+            const user = await this.userRepository.findOne({ email }) as IUserDTO;
+            if (!user) {
+                throw new Error('User not found!');
+            };
+
+            await this.httpService.delete('http://books-service/api/books', {
+                params: { userId: user._id.toString() }
+            }).toPromise();
+            
             await this.userRepository.deleteOne({ email });
+
             return true;  
         } catch (err) {
             console.error(err);

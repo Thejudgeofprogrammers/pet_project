@@ -1,11 +1,11 @@
-import { Types } from "mongoose";
+import { Document, Types } from "mongoose";
 import { ObjectId } from "mongoose";
 
 interface IUserEmail {
     value: string;
 };
   
-interface IUserDTO {
+interface IUserDTO extends Document {
     _id: string | ObjectId;
     username: string;
     password: string;

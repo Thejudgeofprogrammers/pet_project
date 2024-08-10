@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res, Headers } from '@nestjs/common';
 import { BookCommentsService } from './book-comments.service';
 import { Response } from 'express';
 
@@ -7,10 +7,16 @@ export class BookCommentsController {
     constructor(private readonly bookCommentsService: BookCommentsService) {};
 
     @Post()
-    async createComment(@Body('bookId') bookId: string, @Body('comment') comment: string, @Res() res: Response): Promise<void> {
+    async createComment(
+        @Headers('Authorization') authHeader: string,
+        @Body('bookId') bookId: string, 
+        @Body('comment') comment: string, 
+        @Res() res: Response
+    ): Promise<void> {
         try {
-            const data =  await this.bookCommentsService.createComment(bookId, comment);
-            res.status(HttpStatus.CREATED).json({ message: 'Комментарий успешно создан', data });;
+            const token = authHeader.split(' ')[1];
+            const data = await this.bookCommentsService.createComment(bookId, comment, token);
+            res.status(HttpStatus.CREATED).json({ message: 'Комментарий успешно создан', data });
         } catch (err) {
             res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
             console.error('Комментарий не создан', err);
@@ -18,9 +24,14 @@ export class BookCommentsController {
     };
 
     @Get(':bookId')
-    async findAllComments(@Param('bookId') bookId: string, @Res() res: Response): Promise<void> {
+    async findAllComments(
+        @Headers('Authorization') authHeader: string,
+        @Param('bookId') bookId: string, 
+        @Res() res: Response
+    ): Promise<void> {
         try {
-            const dataArray = await this.bookCommentsService.findAllComments(bookId);
+            const token = authHeader.split(' ')[1];
+            const dataArray = await this.bookCommentsService.findAllComments(bookId, token);
             res.status(HttpStatus.OK).json(dataArray);
         } catch (err) {
             res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
@@ -29,9 +40,15 @@ export class BookCommentsController {
     };
 
     @Put(':id')
-    async updateComment(@Param('id') id: string, @Body('comment') comment: string, @Res() res: Response): Promise<void> {
+    async updateComment(
+        @Headers('Authorization') authHeader: string,
+        @Param('id') id: string, 
+        @Body('comment') comment: string, 
+        @Res() res: Response
+    ): Promise<void> {
         try {
-            await this.bookCommentsService.updateComment(id, { comment });
+            const token = authHeader.split(' ')[1];
+            await this.bookCommentsService.updateComment(id, { comment }, token);
             res.status(HttpStatus.OK).json({ message: 'Комментарий успешно обновлён' });
         } catch (err) {
             res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
@@ -40,9 +57,14 @@ export class BookCommentsController {
     };
 
     @Delete(':id')
-    async deleteComment(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    async deleteComment(
+        @Headers('Authorization') authHeader: string,
+        @Param('id') id: string, 
+        @Res() res: Response
+    ): Promise<void> {
         try {
-            await this.bookCommentsService.deleteComment(id);
+            const token = authHeader.split(' ')[1];
+            await this.bookCommentsService.deleteComment(id, token);
             res.status(HttpStatus.OK).json({ message: 'Комментарий успешно удалён' });
         } catch (err) {
             res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });

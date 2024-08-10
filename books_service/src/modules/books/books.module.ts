@@ -3,13 +3,13 @@ import { BooksController } from './books.controller';
 import { BooksService } from './books.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Book, BookSchema } from './schemas/book.schema';
-import { AuthModule } from '../auth/auth.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
     imports: [MongooseModule.forFeature([
         { name: Book.name, schema: BookSchema },
     ]),
-    AuthModule
+    HttpModule
     ],
     controllers: [BooksController],
     providers: [BooksService],

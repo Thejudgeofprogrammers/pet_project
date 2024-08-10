@@ -11,14 +11,16 @@ export class BookCommentsGateway {
     constructor(private readonly bookCommentsService: BookCommentsService) {};
 
     @SubscribeMessage('getAllComments')
-    async handleGetAllComments(@MessageBody() bookId: string): Promise<IBookCommentDTO[]> {
-        const comments = await this.bookCommentsService.findAllComments(bookId);
+    async handleGetAllComments(@MessageBody() data: { bookId: string, token: string} ): Promise<IBookCommentDTO[]> {
+        const { bookId, token } = data;
+        const comments = await this.bookCommentsService.findAllComments(bookId, token);
         return comments;
     };
 
     @SubscribeMessage('addComment')
-    async handleAddComment(@MessageBody() data: { bookId: string, comment: string }): Promise<IBookCommentDTO> {
-        const newComment = await this.bookCommentsService.createComment(data.bookId, data.comment);
+    async handleAddComment(@MessageBody() data: { bookId: string, comment: string, token: string }): Promise<IBookCommentDTO> {
+        const { bookId, comment, token } = data;
+        const newComment = await this.bookCommentsService.createComment(bookId, comment, token);
         this.server.emit('commentAdded', newComment);
         return newComment;
     };

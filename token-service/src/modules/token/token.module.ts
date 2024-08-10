@@ -4,8 +4,8 @@ import { TokenService } from "./token.service";
 import { TokenController } from './token.controller';
 
 @Module({
-    providers: [ TokenService, JwtService],
+    providers: [ TokenService, JwtService ],
     exports: [ TokenService ],
-    controllers: [TokenController]
+    controllers: [ TokenController ]
 })
 export class TokenModule {};

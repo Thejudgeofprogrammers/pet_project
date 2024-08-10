@@ -1,9 +1,9 @@
-version: '3'
+version: '3.8'
 services:
 
   mongodb:
     image: mongo
-    container_name: my_mongodb_prod
+    container_name: mongo_db_server_prod
     restart: always
     ports:
       - "27017:27017"
@@ -18,32 +18,53 @@ services:
         - "6379:6379"
 
   nginx:
-    image: nginx:alpine3
+    image: nginx:stable
     container_name: nginx_prod
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./frontend/build:/usr/share/nginx/html
     ports:
-      - "3000:80"
+      - "443:443"
     environment:
       - NGINX_HOST=foobar.com
       - NGINX_PORT=80
 
-  main_service:
-    build: ./main_service
+  books_service:
+    build: ./books_service
     ports: 
       - "3001:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     depends_on:
       - mongodb
       - redis
-    container_name: main_service
+    container_name: books_service_prod
     env_file:
-      - ./main/.env
+      - ./books_service/.env
     
   auth_service:
     build: ./auth_service
     ports: 
       - "3002:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - mongodb
+      - redis
+    container_name: auth_service_prod
+    env_file:
+      - ./auth_service/.env
+
+  token_service:
+    build: ./token_service
+    ports: 
+      - "3003:3000"
     depends_on:
       - mongodb
       - redis
@@ -52,9 +73,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    container_name: auth_service
+    container_name: token_service_prod
     env_file:
-      - ./auth/.env
+      - ./token_service/.env
 
 volumes:
   mongodb_data:

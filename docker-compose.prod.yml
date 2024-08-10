@@ -61,8 +61,8 @@ services:
     env_file:
       - ./auth_service/.env
 
-  token_service:
-    build: ./token_service
+  token-service:
+    build: ./token-service
     ports: 
       - "3003:3000"
     depends_on:
@@ -73,9 +73,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    container_name: token_service_prod
+    container_name: token-service_prod
     env_file:
-      - ./token_service/.env
+      - ./token-service/.env
 
 volumes:
   mongodb_data:

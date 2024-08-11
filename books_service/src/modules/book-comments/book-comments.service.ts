@@ -14,7 +14,7 @@ export class BookCommentsService {
         private readonly httpService: HttpService,
     ) {};
 
-    private readonly authServiceUrl = 'http://auth-service/api/auth';
+    private readonly authServiceUrl = 'http://auth_service/api/auth';
 
     async validateUser(token: string): Promise<any> {
         try {

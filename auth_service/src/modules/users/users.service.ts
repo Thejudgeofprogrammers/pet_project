@@ -63,7 +63,7 @@ export class UsersService {
                 throw new Error('User not found!');
             };
 
-            const books = await this.httpService.get('http://books-service/api/books', {
+            const books = await this.httpService.get('http://books_service/api/books', {
                 params: { userId: (await user)._id.toString() }
             }).toPromise();
 
@@ -90,7 +90,7 @@ export class UsersService {
                 throw new Error('User not found!');
             };
 
-            await this.httpService.delete('http://books-service/api/books', {
+            await this.httpService.delete('http://books_service/api/books', {
                 params: { userId: user._id.toString() }
             }).toPromise();
             

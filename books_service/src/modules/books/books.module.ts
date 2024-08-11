@@ -4,12 +4,14 @@ import { BooksService } from './books.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Book, BookSchema } from './schemas/book.schema';
 import { HttpModule } from '@nestjs/axios';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
     imports: [MongooseModule.forFeature([
         { name: Book.name, schema: BookSchema },
     ]),
-    HttpModule
+    HttpModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     ],
     controllers: [BooksController],
     providers: [BooksService],

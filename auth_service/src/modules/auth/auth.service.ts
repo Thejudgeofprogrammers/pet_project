@@ -18,7 +18,7 @@ export class AuthService {
     async validateUser(token: string): Promise<any> {
         try {
             const response = await lastValueFrom(
-                this.httpService.get(`http://token-service/api/token/validate`, {
+                this.httpService.get(`http://token_service/api/token/validate`, {
                     headers: { Authorization: `Bearer ${token}` },
                 })
             );
@@ -31,7 +31,7 @@ export class AuthService {
     async generateToken(user: any): Promise<string> {
         try {
             const response = await lastValueFrom(
-                this.httpService.post(`http://token-service/api/token/generate`, { user })
+                this.httpService.post(`http://token+service/api/token/generate`, { user })
             );
             return response.data.token;
         } catch (err) {

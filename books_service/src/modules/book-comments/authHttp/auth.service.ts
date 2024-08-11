@@ -4,9 +4,9 @@ import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-    private readonly authServiceUrl = 'http://auth-service/api/auth';
+    private readonly authServiceUrl = 'http://auth_service/api/auth';
 
-    constructor(private readonly httpService: HttpService) {}
+    constructor(private readonly httpService: HttpService) {};
 
     async validateUser(token: string): Promise<any> {
         try {
@@ -19,8 +19,8 @@ export class AuthService {
         } catch (err) {
             console.error('Ошибка проверки токена:', err.message);
             throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-        }
-    }
+        };
+    };
 
     async getUserInfo(userId: string): Promise<any> {
         try {
@@ -31,6 +31,6 @@ export class AuthService {
         } catch (err) {
             console.error('Ошибка получения информации о пользователе:', err.message);
             throw new HttpException('Failed to fetch user information', HttpStatus.BAD_REQUEST);
-        }
-    }
-}
+        };
+    };
+};

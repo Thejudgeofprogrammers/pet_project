@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { loggerMiddleware } from '../../middlewares/logger.middleware';
 import { HealthModule } from '../health/health.module';
 import { TokenModule } from '../token/token.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
     imports: [
@@ -15,7 +16,8 @@ import { TokenModule } from '../token/token.module';
         load: [configurations]
     }),
     MongooseModule.forRoot(process.env.MONGO_CONNECTION),
-    HealthModule, TokenModule    
+    HealthModule, TokenModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }) 
 ],
     controllers: [AppController],
     providers: [AppService],
